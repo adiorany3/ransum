@@ -7,7 +7,7 @@ Aplikasi Streamlit untuk menghitung efisiensi ekonomis bahan pakan berdasarkan k
 ## Video Demonstrasi
 ![Video Demo](assets/thumbnail.png)
 
-[▶️ Tonton Video Demonstrasi](./video.MOV)
+[▶️ Tonton Video Demonstrasi](./video.mov)
 
 ## Fitur
 - **Perhitungan Efisiensi**: Menghitung rasio nutrisi per biaya untuk berbagai bahan pakan
