@@ -5,7 +5,9 @@ import numpy as np
 from scipy.optimize import linprog
 import base64
 from pathlib import Path
-import datetime  # Add this with your other imports at the top
+import datetime
+import io
+from fpdf import FPDF
 
 # Function to load and encode a local image
 def get_img_as_base64(file_path):
@@ -80,13 +82,18 @@ with st.expander("Lihat contoh data"):
         mime="text/csv"
     )
 
-# Change the data loading section to handle a single file
+# Change the data loading section to handle CSV and Excel files
 st.header('Data Bahan Pakan')
-uploaded_file = st.file_uploader("Upload file CSV data bahan pakan (kandungan dan harga)", type=["csv"])
+uploaded_file = st.file_uploader("Upload file data bahan pakan (CSV atau Excel)", type=["csv", "xlsx", "xls"])
 
 if uploaded_file is not None:
     try:
-        df_combined = pd.read_csv(uploaded_file)
+        # Determine file type and read accordingly
+        if uploaded_file.name.endswith('.csv'):
+            df_combined = pd.read_csv(uploaded_file)
+        elif uploaded_file.name.endswith(('.xlsx', '.xls')):
+            df_combined = pd.read_excel(uploaded_file)
+            
         st.success("Data berhasil diupload!")
         st.dataframe(df_combined)
     except Exception as e:
@@ -754,6 +761,58 @@ if 'Bahan' in df_combined.columns:
                         
                         st.dataframe(comparison_df.sort_values('Biaya per 100kg (Rp)').head(10))
                         
+                    # Add this after the existing CSV download button in the optimization results section
+                    if best_result and best_result.success:
+                        # Create Excel file in memory
+                        output = io.BytesIO()
+                        
+                        # Create a Pandas Excel writer using the BytesIO object
+                        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                            # Write the formulation data to sheet 1
+                            formulation.to_excel(writer, sheet_name='Formulasi Ransum', index=False)
+                            
+                            # Access the workbook and worksheet objects
+                            workbook = writer.book
+                            worksheet = writer.sheets['Formulasi Ransum']
+                            
+                            # Add a summary sheet
+                            summary_data = {
+                                'Parameter': ['Tanggal', 'Total Protein (%)', 'Target Protein (%)', 
+                                             'Total Energi (Kcal/kg)', 'Target Energi (Kcal/kg)',
+                                             'Biaya per kg (Rp)', 'Biaya per 100kg (Rp)'],
+                                'Nilai': [datetime.datetime.now().strftime("%d-%m-%Y"), 
+                                         f"{total_protein:.2f}", f"{target_protein:.2f}",
+                                         f"{total_energy:.0f}", f"{target_energy:.0f}",
+                                         f"{cost_per_kg:,.0f}", f"{total_cost:,.0f}"]
+                            }
+                            
+                            pd.DataFrame(summary_data).to_excel(writer, sheet_name='Ringkasan', index=False)
+                            
+                            # Format the Excel file
+                            header_format = workbook.add_format({
+                                'bold': True,
+                                'text_wrap': True,
+                                'valign': 'top',
+                                'fg_color': '#D7E4BC',
+                                'border': 1
+                            })
+                            
+                            # Set column widths
+                            worksheet.set_column('A:A', 20)
+                            worksheet.set_column('B:D', 15)
+                            worksheet.set_column('E:F', 18)
+                        
+                        # Reset pointer to beginning of file
+                        output.seek(0)
+                        
+                        # Provide the Excel download button
+                        st.download_button(
+                            label="Download Formulasi Ransum (Excel)",
+                            data=output,
+                            file_name="formulasi_ransum_optimal.xlsx",
+                            mime="application/vnd.ms-excel",
+                            key="download-excel"
+                        )
                 else:
                     st.error(f"Optimasi tidak berhasil: {best_result.message if best_result else 'Tidak ada solusi yang ditemukan'}")
                     st.info("Coba ubah target nutrisi atau batasan penggunaan bahan")
@@ -785,3 +844,50 @@ st.markdown(f"""
     <p style="font-size:12px; color:#777">All rights reserved.</p>
 </div>
 """, unsafe_allow_html=True)
+
+# Function to create PDF from formulation results
+def create_formulation_pdf(formulation, total_protein, target_protein, total_energy, target_energy, total_cost, cost_per_kg):
+    pdf = FPDF()
+    pdf.add_page()
+    
+    # Set up the PDF
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(0, 10, 'Formulasi Ransum Optimal', 0, 1, 'C')
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, f'Tanggal: {datetime.datetime.now().strftime("%d-%m-%Y")}', 0, 1, 'C')
+    pdf.ln(5)
+    
+    # Add summary metrics
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, 'Ringkasan Nutrisi dan Biaya:', 0, 1)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(60, 10, f'Total Protein: {total_protein:.2f}%', 0, 0)
+    pdf.cell(60, 10, f'Target Protein: {target_protein:.2f}%', 0, 1)
+    pdf.cell(60, 10, f'Total Energi: {total_energy:.0f} Kcal/kg', 0, 0)
+    pdf.cell(60, 10, f'Target Energi: {target_energy:.0f} Kcal/kg', 0, 1)
+    pdf.cell(60, 10, f'Biaya per kg: Rp {cost_per_kg:,.0f}', 0, 0)
+    pdf.cell(60, 10, f'Biaya per 100kg: Rp {total_cost:,.0f}', 0, 1)
+    pdf.ln(5)
+    
+    # Add table header
+    pdf.set_font('Arial', 'B', 10)
+    pdf.cell(60, 10, 'Bahan', 1, 0, 'C')
+    pdf.cell(30, 10, 'Persentase (%)', 1, 0, 'C')
+    pdf.cell(40, 10, 'Jumlah (kg/100kg)', 1, 0, 'C')
+    pdf.cell(60, 10, 'Biaya (Rp)', 1, 1, 'C')
+    
+    # Add table rows
+    pdf.set_font('Arial', '', 10)
+    for _, row in formulation.iterrows():
+        pdf.cell(60, 10, row['Bahan'], 1, 0)
+        pdf.cell(30, 10, f"{row['Persentase (%)']:.2f}", 1, 0, 'R')
+        pdf.cell(40, 10, f"{row['Jumlah (kg per 100kg)']:.2f}", 1, 0, 'R')
+        pdf.cell(60, 10, f"{row['Biaya Kontribusi (Rp)']:,.2f}", 1, 1, 'R')
+    
+    # Add footer
+    pdf.ln(10)
+    pdf.set_font('Arial', 'I', 10)
+    pdf.cell(0, 10, 'Dibuat dengan Kalkulator Efisiensi Pakan by Galuh Adi Insani', 0, 1, 'C')
+    
+    # Return PDF as bytes
+    return pdf.output(dest='S').encode('latin-1')
