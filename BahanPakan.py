@@ -146,12 +146,41 @@ if 'Bahan' in df_combined.columns:
         st.subheader("Tabel Efisiensi Bahan Pakan")
         st.dataframe(df_efisiensi)
         
-        # Download hasil
+        # Create Excel file in memory for efficiency results
+        efficiency_output = io.BytesIO()
+
+        # Create a Pandas Excel writer using the BytesIO object
+        with pd.ExcelWriter(efficiency_output, engine='xlsxwriter') as writer:
+            # Write the efficiency data
+            df_efisiensi.to_excel(writer, sheet_name='Efisiensi Pakan', index=False)
+            
+            # Access the workbook and worksheet objects
+            workbook = writer.book
+            worksheet = writer.sheets['Efisiensi Pakan']
+            
+            # Format the Excel file
+            header_format = workbook.add_format({
+                'bold': True,
+                'text_wrap': True,
+                'valign': 'top',
+                'fg_color': '#D7E4BC',
+                'border': 1
+            })
+            
+            # Set column widths
+            worksheet.set_column('A:A', 20)  # Bahan column
+            worksheet.set_column('B:Z', 15)  # All other columns
+
+        # Reset pointer to beginning of file
+        efficiency_output.seek(0)
+
+        # Download button for Excel
         st.download_button(
-            label="Download hasil perhitungan efisiensi (CSV)",
-            data=df_efisiensi.to_csv(index=False),
-            file_name="hasil_efisiensi_pakan.csv",
-            mime="text/csv"
+            label="Download hasil perhitungan efisiensi (Excel)",
+            data=efficiency_output,
+            file_name="hasil_efisiensi_pakan.xlsx",
+            mime="application/vnd.ms-excel",
+            key="download-efficiency-excel"
         )
         
         # Visualisasi efisiensi untuk setiap nutrisi
