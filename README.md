@@ -5,7 +5,7 @@
 Aplikasi Streamlit untuk menghitung efisiensi ekonomis bahan pakan berdasarkan kandungan nutrisi dan harga. Aplikasi ini juga menyediakan alat optimasi formulasi ransum untuk mendapatkan kombinasi bahan pakan yang memenuhi kebutuhan nutrisi dengan biaya minimum.
 
 ## Video Demonstrasi
-![Video Demo](assets/thumbnail.png)
+![Video Demo](assets/gambar.png)
 
 [▶️ Tonton Video Demonstrasi](./video.mov)
 
