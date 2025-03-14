@@ -4,6 +4,11 @@
 ## Deskripsi
 Aplikasi Streamlit untuk menghitung efisiensi ekonomis bahan pakan berdasarkan kandungan nutrisi dan harga. Aplikasi ini juga menyediakan alat optimasi formulasi ransum untuk mendapatkan kombinasi bahan pakan yang memenuhi kebutuhan nutrisi dengan biaya minimum.
 
+## Video Demonstrasi
+![Video Demo](assets/thumbnail.png)
+
+[▶️ Tonton Video Demonstrasi](./video.MOV)
+
 ## Fitur
 - **Perhitungan Efisiensi**: Menghitung rasio nutrisi per biaya untuk berbagai bahan pakan
 - **Visualisasi Data**: Grafik interaktif untuk memvisualisasikan metrik efisiensi
