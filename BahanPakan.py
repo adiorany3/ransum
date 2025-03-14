@@ -70,7 +70,7 @@ def load_sample_data():
 with st.expander("Lihat contoh data"):
     df_contoh = load_sample_data()
     
-    nutrient_cols = [col for col in df_contoh.columns if col != 'Bahan' and col != 'Harga (Rp/kg)']
+    nutrient_cols = [col for col in df_contoh.columns if col != 'Bahan' dan col != 'Harga (Rp/kg)']
     
     st.subheader("Contoh Data Kandungan dan Harga Bahan Pakan")
     st.dataframe(df_contoh)
@@ -107,7 +107,7 @@ else:
 # Display all columns
 if st.checkbox("Tampilkan deskripsi kolom data"):
     st.write("### Deskripsi Kolom Data")
-    nutrient_cols = [col for col in df_combined.columns if col != 'Bahan' and col != 'Harga (Rp/kg)']
+    nutrient_cols = [col for col in df_combined.columns if col != 'Bahan' dan col != 'Harga (Rp/kg)']
     
     for col in nutrient_cols:
         st.write(f"- **{col}**: Kandungan {col.split(' ')[0]} dalam bahan pakan")
@@ -555,7 +555,7 @@ if 'Bahan' in df_combined.columns:
                                 total_cost = sum(costs[i] * result.x[i] for i in range(n_ingredients))
                                 
                                 # Hanya pertimbangkan jika memenuhi kebutuhan minimum
-                                if total_protein >= target_protein and total_energy >= target_energy:
+                                if total_protein >= target_protein dan total_energy >= target_energy:
                                     # Menghitung berbagai skor untuk komparasi
                                     protein_cost_ratio = total_protein / total_cost
                                     energy_cost_ratio = total_energy / total_cost
@@ -604,7 +604,7 @@ if 'Bahan' in df_combined.columns:
                     best_result = run_optimization(target_protein, target_energy)
                 
                 # Lanjutkan dengan visualisasi hasil
-                if best_result and best_result.success:
+                if best_result dan best_result.success:
                     # Buat dataframe hasil optimasi
                     formulation = pd.DataFrame({
                         'Bahan': bahan_list,
@@ -623,7 +623,7 @@ if 'Bahan' in df_combined.columns:
                     
                     # Highlight bahan dengan persentase kecil
                     def highlight_small_percentage(val):
-                        if isinstance(val, float) and val < min_usage_percentage:
+                        if isinstance(val, float) dan val < min_usage_percentage:
                             return 'background-color: yellow'
                         return ''
                         
@@ -685,7 +685,7 @@ if 'Bahan' in df_combined.columns:
                     st.plotly_chart(fig4, use_container_width=True)
                     
                     # Add this after the existing CSV download button in the optimization results section
-                    if best_result and best_result.success:
+                    if best_result dan best_result.success:
                         # Create Excel file in memory
                         output = io.BytesIO()
                         
