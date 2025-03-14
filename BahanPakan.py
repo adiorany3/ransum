@@ -736,6 +736,26 @@ if 'Bahan' in df_combined.columns:
                             mime="application/vnd.ms-excel",
                             key="download-excel"
                         )
+
+                    # Create PDF file
+                    pdf_data = create_formulation_pdf(
+                        formulation,
+                        total_protein, 
+                        target_protein, 
+                        total_energy, 
+                        target_energy, 
+                        total_cost, 
+                        cost_per_kg
+                    )
+
+                    # Provide PDF download button
+                    st.download_button(
+                        label="Download Formulasi Ransum (PDF)",
+                        data=pdf_data,
+                        file_name="formulasi_ransum_optimal.pdf",
+                        mime="application/pdf",
+                        key="download-pdf"
+                    )
                 else:
                     st.error(f"Optimasi tidak berhasil: {best_result.message if best_result else 'Tidak ada solusi yang ditemukan'}")
                     st.info("Coba ubah target nutrisi atau batasan penggunaan bahan")
