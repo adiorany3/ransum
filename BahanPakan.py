@@ -9,6 +9,16 @@ st.write("""
 Aplikasi ini membantu anda menghitung efisiensi ekonomis bahan pakan berdasarkan kandungan nutrisi dan harganya.
 Efisiensi dihitung sebagai jumlah nutrisi yang didapat per rupiah yang dikeluarkan.
 """)
+# Hide default Streamlit elements
+hide_st_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
 
 # Modified load_sample_data function that returns a single DataFrame
 def load_sample_data():
