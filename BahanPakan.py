@@ -3,6 +3,23 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 from scipy.optimize import linprog
+import base64
+from pathlib import Path
+import datetime  # Add this with your other imports at the top
+
+# Function to load and encode a local image
+def get_img_as_base64(file_path):
+    img_path = Path(file_path)
+    with open(img_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+
+# Set page configuration
+st.set_page_config(
+    page_title="Kalkulator Efisiensi Pakan",
+    page_icon="🐔", # Changed from cow to chicken emoji
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 st.title('Kalkulator Efisiensi Pakan')
 st.write("""
@@ -744,3 +761,27 @@ if 'Bahan' in df_combined.columns:
         st.warning("Tidak ada kecocokan antara nama bahan di data kandungan dan data harga")
 else:
     st.error("Format data tidak sesuai. Pastikan terdapat kolom 'Bahan' pada kedua file CSV")
+
+# Footer with LinkedIn profile link and improved styling
+st.markdown("""
+<hr style="height:1px;border:none;color:#333;background-color:#333;margin-top:30px;margin-bottom:20px">
+""", unsafe_allow_html=True)
+
+# Get current year for footer
+current_year = datetime.datetime.now().year
+
+st.markdown(f"""
+<div style="text-align:center; padding:15px; margin-top:10px; margin-bottom:20px">
+    <p style="font-size:16px; color:#555">
+        © {current_year} Developed by: 
+        <a href="https://www.linkedin.com/in/galuh-adi-insani-1aa0a5105/" target="_blank" 
+           style="text-decoration:none; color:#0077B5; font-weight:bold">
+            <img src="https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg" 
+                 width="16" height="16" style="vertical-align:middle; margin-right:5px">
+            Galuh Adi Insani
+        </a> 
+        with <span style="color:#e25555">❤️</span>
+    </p>
+    <p style="font-size:12px; color:#777">All rights reserved.</p>
+</div>
+""", unsafe_allow_html=True)
