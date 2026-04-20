@@ -704,7 +704,12 @@ if 'Bahan' in df_combined.columns:
                         return ''
                         
                     # Tampilkan dataframe dengan highlight
-                    st.write(formulation.style.applymap(highlight_small_percentage, subset=['Persentase (%)']))
+                    # Use apply for column-specific styling (compatible with all pandas versions)
+                    def highlight_col(col):
+                        if col.name == 'Persentase (%)':
+                            return [highlight_small_percentage(v) for v in col]
+                        return [''] * len(col)
+                    st.write(formulation.style.apply(highlight_col))
                     
                     # Hitung total nutrisi dan biaya
                     total_protein = sum(formulation['Protein Kontribusi (%)'])
