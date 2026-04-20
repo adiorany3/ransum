@@ -704,7 +704,7 @@ if 'Bahan' in df_combined.columns:
                         return ''
                         
                     # Tampilkan dataframe dengan highlight
-                    st.dataframe(formulation.style.applymap(highlight_small_percentage, subset=['Persentase (%)']))
+                    st.write(formulation.style.applymap(highlight_small_percentage, subset=['Persentase (%)']))
                     
                     # Hitung total nutrisi dan biaya
                     total_protein = sum(formulation['Protein Kontribusi (%)'])
