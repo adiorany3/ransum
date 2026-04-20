@@ -87,6 +87,18 @@ Formulasi matematis:
   - ∑Proporsi_i = 1 (jumlah semua proporsi sama dengan 100%)
 
 ## Fitur Lanjutan
+## Highlight Persentase Kecil pada DataFrame
+
+Mulai April 2026, aplikasi ini menampilkan highlight (warna kuning) pada baris bahan pakan dengan persentase kecil di hasil formulasi. Fitur ini memudahkan pengguna untuk mengidentifikasi bahan dengan kontribusi minimal dalam ransum.
+
+**Catatan Bugfix:**
+Sebelumnya, aplikasi mengalami error saat menampilkan DataFrame dengan highlight menggunakan `st.dataframe` dan pandas Styler. Sekarang, aplikasi menggunakan `st.write(formulation.style.apply(...))` untuk kompatibilitas penuh dengan semua versi pandas dan Streamlit.
+
+**Cara kerja:**
+- Bahan dengan persentase di bawah ambang batas (misal < 1%) akan di-highlight kuning pada kolom "Persentase (%)".
+- Tampilan ini hanya muncul pada hasil optimasi formulasi.
+
+Tidak perlu konfigurasi tambahan, fitur ini aktif secara otomatis.
 - **Auto-optimasi**: Aplikasi dapat otomatis menguji berbagai kombinasi target protein dan energi untuk menemukan formulasi dengan biaya paling efektif
 - **Metrik Optimasi**: Pilih antara berbagai tujuan optimasi (biaya terendah, rasio protein/biaya terbaik, rasio energi/biaya terbaik, atau seimbang)
 - **Batasan Penggunaan**: Atur persentase minimum dan maksimum untuk setiap bahan pakan dalam formulasi
